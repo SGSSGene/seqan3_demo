@@ -1,24 +1,19 @@
-# SeqAn3 App Template
-
-[![Build Status](https://travis-ci.com/joergi-w/app-template.svg?branch=master)](https://travis-ci.com/joergi-w/app-template)
-
-This is a template for app developers with SeqAn3. You can easily clone this repository and modify the existing code to your needs. It provides the elementary set-up for all SeqAn3 applications.
+# Demo to show possible improvements to sdsl and seqan3
 
 Instructions:
-1. clone this repository: `git clone --recurse-submodules https://github.com/joergi-w/app-template.git`
-2. create a build directory and visit it: `mkdir build && cd build`
-3. run cmake: `cmake ../app-template`
-4. run `make`
-5. run the tests: `make test`
-6. execute the app: `./my_app`
+1. clone this repository
+2. run `mkdir seqan3_demo/build; cd seqan3_demo/build`
+3. run cmake `cmake ..`
+4. enjoy `./cursor_demo`
 
-Planned features are:
-- build the app with seqan3
-- cli tests (black box)
-- api tests (white box)
-- tutorials, usage instructions
-- api documentation
-- benchmarks for time, memory and disk space consumption
-- coverage tests: api
-- automated CD
-- automated CI
+
+This repo does not use submodules. Everything is included via subrepos.
+
+Check commit '84801d139' to see the additions to sdsl.
+
+Check file 'seqan3/search/fm_index/bi_fm_index_cursor_ng2.hpp' for cursor implementation.
+Check file 'src/main.cpp' for usage of cursor.
+
+Also file 'seqan3/search/search_algorithm/search_ng2.hpp' has a sketch of how a search could look like.
+This search will not work with "normal" search schemes, but need so called expanded ones. (Code to do this is currently missing)
+
