@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/google/googletest.git
+	branch = master
+	commit = 67cc66080d64e3fa5124fe57ed0cf15e2cecfdeb
+	parent = d72a54b995824d5f055d1dcdf283fcb5e56335ab
+	method = merge
+	cmdver = 0.4.0
