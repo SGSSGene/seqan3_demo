@@ -126,6 +126,12 @@ public:
 	const isa_sample_type&						  isa_sample   = m_isa_sample;
 	const wavelet_tree_type&					  wavelet_tree = m_wavelet_tree;
 
+	//!TODO hack to access wavelet tree
+	// see wavelet_tree::init()
+	void init() {
+		m_wavelet_tree.init();
+	}
+
 	//! Default constructor
 	csa_wt() = default;
 

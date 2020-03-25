@@ -274,6 +274,12 @@ public:
 		return *this;
 	}
 
+	//!TODO HACK see m_tree::init()
+	//this function should be done in construction and serialization
+	void init() {
+		m_tree.init();
+	}
+
 	//! Returns the size of the original vector.
 	size_type size() const { return m_size; }
 
@@ -529,6 +535,7 @@ public:
 		size_type smaller = 0, greater = 0;
 		node_type v = m_tree.root();
 		for (uint32_t l = 0; l < path_len; ++l, p >>= 1) {
+
 			size_type r1_1 = (m_bv_rank(m_tree.bv_pos(v) + i) - m_tree.bv_pos_rank(v));
 			size_type r1_2 = (m_bv_rank(m_tree.bv_pos(v) + j) - m_tree.bv_pos_rank(v));
 
@@ -543,8 +550,98 @@ public:
 			}
 			v = m_tree.child(v, p & 1);
 		}
+
 		return t_ret_type{i, smaller, greater};
 	}
+
+	/** !HACK helper structure
+	 * Walks through a wavelet tree
+	 */
+	template <typename CB, typename tree_t, typename bv_rank_t>
+	struct lex_count_cb {
+		tree_t const&    tree;
+		bv_rank_t const& bv_rank;
+
+		CB const& cb;
+
+		lex_count_cb(size_type i, size_type j, tree_t const& _tree, bv_rank_t const& _bv_rank, CB const& _cb) noexcept
+			: tree    {_tree}
+			, bv_rank {_bv_rank}
+			, cb      {_cb}
+		{
+			count(tree.root(), i, j, 0, 0, 0, 0);
+		}
+
+		void count(value_type v, size_type i, size_type j, size_type smaller, size_type greater, int depth, uint64_t path) const noexcept {
+			if (tree.is_leaf(v)) {
+				cb(i, smaller, greater, depth, tree.path_to_c(path));
+				return;
+			}
+
+			auto bv_pos      = tree.bv_pos(v);
+			auto bv_pos_rank = tree.bv_pos_rank(v);
+			size_type r1_1 = (bv_rank(bv_pos + i) - bv_pos_rank);
+			size_type r1_2 = (bv_rank(bv_pos + j) - bv_pos_rank);
+
+			{
+				auto newGreater = greater + r1_2 - r1_1;
+				auto newV       = tree.child(v, 0);
+				count(newV, i - r1_1, j - r1_2, smaller, newGreater, depth+1, path);
+			}
+			{
+				auto newSmaller = smaller + j - r1_2 - i + r1_1;
+				auto newV       = tree.child(v, 1);
+				count(newV, r1_1, r1_2, newSmaller, greater, depth+1, path | (1<<depth));
+			}
+		}
+	};
+
+	// fast lex_count
+	// @param i, j left/right boundaries (see lex_count)
+	// @param cb callback that is being called for every path in the wavelet tree
+	template <class t_ret_type = std::tuple<size_type, size_type, size_type>, typename CB>
+	void
+	lex_count_fast_cb(size_type i, size_type j, CB const& cb) const {
+		auto o = lex_count_cb(i, j, m_tree, m_bv_rank, cb);
+	}
+
+
+	template <class t_ret_type = std::tuple<size_type, size_type, size_type>>
+	typename std::enable_if<shape_type::lex_ordered, t_ret_type>::type
+	lex_count_fast(size_type i, size_type j, value_type c) const
+	{
+		assert(i <= j and j <= size());
+		uint64_t p = m_tree.bit_path(c);
+		uint32_t path_len = p >> 56;
+		if (path_len == 0) { // path_len=0: => c is not present
+			value_type _c = (value_type)p;
+			if (c == _c) { // c is smaller than any symbol in wt
+				return t_ret_type{0, 0, j - i};
+			}
+			auto res = lex_count_fast(i, j, _c);
+			return t_ret_type{0, j - i - std::get<2>(res), std::get<2>(res)};
+		}
+		size_type smaller = 0, greater = 0;
+		node_type v = m_tree.root();
+		for (uint32_t l = 0; l < path_len; ++l, p >>= 1) {
+			size_type r1_1 = (m_bv_rank(m_tree.bv_pos(v) + i) - m_tree.bv_pos_rank(v));
+			size_type r1_2 = (m_bv_rank(m_tree.bv_pos(v) + j) - m_tree.bv_pos_rank(v));
+
+			if (p & 1) {
+				smaller += j - r1_2 - i + r1_1;
+				i = r1_1;
+				j = r1_2;
+			} else {
+				greater += r1_2 - r1_1;
+				i -= r1_1;
+				j -= r1_2;
+			}
+			v = m_tree.child(v, p & 1);
+		}
+
+		return t_ret_type{i, smaller, greater};
+	}
+
 
 	//! How many symbols are lexicographic smaller than c in [0..i-1].
 	/*!

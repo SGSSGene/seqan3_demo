@@ -188,7 +188,8 @@ struct _byte_tree {
 	node_type			   m_c_to_leaf[fixed_sigma]; // map symbol c to a leaf in the tree structure
 	// if m_c_to_leaf[c] == undef the char does
 	// not exists in the text
-	uint64_t m_path[fixed_sigma]; // path information for each char; the bits at position
+	uint64_t m_path[fixed_sigma];     // path information for each char; the bits at position
+	uint64_t m_rev_path[fixed_sigma]; // converts a path to char
 	// 0..55 hold path information; bits 56..63 the length
 	// of the path in binary representation
 
@@ -390,6 +391,28 @@ struct _byte_tree {
 
 	//! Return the path as left/right bit sequence in a uint64_t
 	inline uint64_t bit_path(value_type c) const { return m_path[c]; }
+
+	//! initializes m_rev_path
+	//!TODO this should be integrated in the serialize function
+	//and in the construction of an sdsl
+	void init() {
+		for (size_t i{0}; i < fixed_sigma; ++i) {
+			m_rev_path[i] = 0xFF;
+		}
+
+		for (size_t i{0}; i < fixed_sigma; ++i) {
+			if ((m_path[i] >> 56) > 0) {
+				m_rev_path[m_path[i] & 0xFF] = i;
+			}
+		}
+	}
+	// converts a path 'v' to a char value
+	auto path_to_c(uint64_t v) const -> value_type {
+		assert(v >= 0);
+		assert(v <= 255);
+		assert(m_rev_path[v] != 0xFF);
+		return m_rev_path[v];
+	}
 
 	//! Return the start of the node in the WT's bit vector
 	inline uint64_t bv_pos(node_type v) const { return m_nodes[v].bv_pos; }
