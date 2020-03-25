@@ -1,0 +1,96 @@
+// -*- C++ -*-
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+// -----------------------------------------------------------------------------------------------------
+
+/*!\file
+ * \brief Provides C++20 additions to the \<iterator\> header.
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ */
+
+#pragma once
+
+#include <iterator>
+
+#ifndef __cpp_lib_ranges
+
+#ifndef RANGES_DEEP_STL_INTEGRATION
+#define RANGES_DEEP_STL_INTEGRATION 1
+#endif
+
+#include <range/v3/iterator/access.hpp>
+#include <range/v3/iterator/concepts.hpp>
+#include <range/v3/iterator/default_sentinel.hpp>
+#include <range/v3/iterator/insert_iterators.hpp>
+#include <range/v3/iterator/operations.hpp>
+#include <range/v3/iterator/stream_iterators.hpp>
+#include <range/v3/iterator/traits.hpp>
+
+#include <seqan3/std/concepts>
+
+// ============================================================================
+//  namespace aliasing
+// ============================================================================
+
+/*!\defgroup iterator iterator
+ * \ingroup std
+ * \brief The \<iterator\> header from C++20's standard library.
+ */
+
+namespace std
+{
+
+namespace
+{
+    // from range/v3/iterator/concepts.hpp
+    using ::ranges::bidirectional_iterator;
+    using ::ranges::contiguous_iterator;
+    using ::ranges::forward_iterator;
+    using ::ranges::incrementable;
+    using ::ranges::indirect_relation;
+    using ::ranges::indirect_result_t;
+    using ::ranges::indirect_strict_weak_order;
+    using ::ranges::indirect_unary_predicate;
+    using ::ranges::indirectly_comparable;
+    using ::ranges::indirectly_copyable;
+    using ::ranges::indirectly_copyable_storable;
+    using ::ranges::indirectly_movable;
+    using ::ranges::indirectly_movable_storable;
+    using ::ranges::indirectly_regular_unary_invocable;
+    using ::ranges::indirectly_swappable;
+    using ::ranges::indirectly_unary_invocable;
+    using ::ranges::input_iterator;
+    using ::ranges::input_or_output_iterator;
+    using ::ranges::mergeable;
+    using ::ranges::output_iterator;
+    using ::ranges::permutable;
+    using ::ranges::projected;
+    using ::ranges::random_access_iterator;
+    using ::ranges::readable;
+    using ::ranges::sentinel_for;
+    using ::ranges::sized_sentinel_for;
+    using ::ranges::sortable;
+    using ::ranges::weakly_incrementable;
+    using ::ranges::writable;
+
+    // from range/v3/iterator/traits.hpp
+    using ::ranges::iter_common_reference_t;
+    using ::ranges::iter_difference_t;
+    using ::ranges::iter_reference_t;
+    using ::ranges::iter_rvalue_reference_t;
+    using ::ranges::iter_value_t;
+
+    using ::ranges::disable_sized_sentinel;
+    template<typename T>
+    using incrementable_traits = ::ranges::incrementable_traits<T>;
+    template<typename T>
+    using readable_traits = ::ranges::readable_traits<T>;
+
+} // anonymous namespace
+
+} // namespace std
+
+#endif

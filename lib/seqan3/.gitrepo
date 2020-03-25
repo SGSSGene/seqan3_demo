@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/seqan/seqan3.git
+	branch = master
+	commit = 860929179abe194aa6993b69d7ef0c60c5573b6b
+	parent = d4b0f63cde18cf58866195e9a2bad64c946c1a7b
+	method = merge
+	cmdver = 0.4.0
