@@ -35,7 +35,7 @@ template <typename index_t>
 class fm_index_cursor;
 
 template <typename index_t>
-class bi_fm_index_cursor;
+class bi_fm_index_cursor_ng2;
 //!\endcond
 
 /*!\addtogroup submodule_fm_index
@@ -330,7 +330,7 @@ public:
     //!\}
 
     template <typename bi_fm_index_t>
-    friend class bi_fm_index_cursor;
+    friend class bi_fm_index_cursor_ng2;
 
     template <typename fm_index_t>
     friend class fm_index_cursor;
@@ -390,6 +390,12 @@ public:
         construct(std::forward<text_t>(text));
     }
     //!\}
+
+    //!TODO check index::init(), this function should not really exists
+    void init() {
+        index.init();
+    }
+
 
     /*!\brief Returns the length of the indexed text including sentinel characters.
      * \returns Returns the length of the indexed text including sentinel characters.

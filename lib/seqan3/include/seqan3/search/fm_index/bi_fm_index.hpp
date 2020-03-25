@@ -19,6 +19,7 @@
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
+#include <seqan3/search/fm_index/bi_fm_index_cursor_ng2.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3
@@ -176,7 +177,7 @@ public:
      * \{
      */
     //!\brief The type of the bidirectional cursor.
-    using cursor_type = bi_fm_index_cursor<bi_fm_index>;
+    using cursor_type = bi_fm_index_cursor_ng2<bi_fm_index>; //!TODO HACK
     //!\brief The type of the unidirectional cursor on the original text.
     using fwd_cursor_type = fm_index_cursor<fm_index_type>;
     //!\brief The type of the unidirectional cursor on the reversed text.
@@ -184,8 +185,9 @@ public:
 
     //!\}
 
-    template <typename bi_fm_index_t>
-    friend class bi_fm_index_cursor;
+    friend cursor_type;
+
+
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -211,6 +213,13 @@ public:
         construct(std::forward<text_t>(text));
     }
     //!\}
+
+    //!TODO check fwd_fm::init(), this function should not really exists
+    void init() {
+        fwd_fm.init();
+        rev_fm.init();
+    }
+
 
     /*!\brief Returns the length of the indexed text including sentinel characters.
      * \returns Returns the length of the indexed text including sentinel characters.
