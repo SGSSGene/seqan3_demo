@@ -3,8 +3,6 @@
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
-#include "fastq_conversion.hpp"
-
 int main(int argc, char ** argv)
 {
     seqan3::argument_parser parser{"Fastq-to-Fasta-Converter", argc, argv};
@@ -33,10 +31,10 @@ int main(int argc, char ** argv)
         return -1;
     }
 
-    convert_fastq(fastq_file, output_file); // Call fastq to fasta converter
+/*    convert_fastq(fastq_file, output_file); // Call fastq to fasta converter
 
     if (verbose) // if flag is set
-        seqan3::debug_stream << "Conversion was a sucess. Congrats!\n";
+        seqan3::debug_stream << "Conversion was a sucess. Congrats!\n";*/
 
 
 

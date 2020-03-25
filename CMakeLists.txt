@@ -1,24 +1,9 @@
 cmake_minimum_required (VERSION 3.4)
 
-## CUSTOMISE
+project (cursor_demo VERSION 0.1.0)
 
-# Define the application name and version.
-project (my_app VERSION 1.0.0)
+find_package (SeqAn3 REQUIRED HINTS lib/seqan3/build_system)
 
-
-## BUILD
-
-add_subdirectory(src)
 add_executable ("${PROJECT_NAME}" src/main.cpp)
-target_link_libraries ("${PROJECT_NAME}" "${PROJECT_NAME}_object")
-file(COPY test/data DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/test)
-add_definitions(-DDATADIR=\"${CMAKE_CURRENT_BINARY_DIR}/test/data/\")
+target_link_libraries ("${PROJECT_NAME}" PUBLIC seqan3::seqan3)
 
-
-## TEST
-
-# Dependency: Googletest
-add_subdirectory(lib/gtest)
-
-enable_testing ()
-add_subdirectory(test/api)
